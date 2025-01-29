@@ -19,7 +19,7 @@ kickButton.Position = UDim2.new(0.5, -100, 0.5, 25)
 kickButton.Text = "Kick Player"
 kickButton.TextScaled = true
 
--- Handle the button click to kick the player
+-- Handle the button click to kick the player (Note: Kick is a client-side only action)
 kickButton.MouseButton1Click:Connect(function()
     local usernameToKick = textBox.Text
     
@@ -29,13 +29,22 @@ kickButton.MouseButton1Click:Connect(function()
         return
     end
     
-    -- Search for the player by username
-    local playerToKick = game.Players:FindFirstChild(usernameToKick)
+    -- Search for the player by username on the client side
+    local playerToKick = nil
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Name == usernameToKick then
+            playerToKick = player
+            break
+        end
+    end
     
     if playerToKick then
-        -- If the player is found, kick them from the game
-        playerToKick:Kick("You have been kicked from the game.")
-        print("Player " .. usernameToKick .. " was kicked.")
+        -- If the player is found, you can't kick them client-side
+        -- Instead, you can send a message to the server to kick the player
+        print("You can only kick yourself from the client side.")
+        -- You can use a RemoteEvent to request the server to kick the player (if needed)
+        -- Uncomment below line and implement server-side logic if you want to kick on server side
+        -- game.ReplicatedStorage.KickPlayer:FireServer(playerToKick)
     else
         -- If the player isn't found, show a warning
         warn("Player not found.")
